@@ -1,5 +1,5 @@
 # docker-win-remote-dev-on-macos
-Set up a Windows Docker container with Openssh and Microsoft Visual Studio BuildTools on macOS host.
+Set up a Windows Docker container with Openssh, Git and Microsoft Visual Studio BuildTools on macOS host.
 One use case can be to develop Windows application remotely from Visual Studio Code in a macOS host.
 
 Here are the installation steps:
