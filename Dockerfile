@@ -29,7 +29,7 @@ COPY install-openssh.ps1 install-openssh.ps1
 RUN ./install-openssh.ps1
 
 # Create a test account
-RUN net user /add User03 Passw0rd
+RUN net user /add devuser devuser
 
 # Install Spinner to watch a Windows service
 RUN `
