@@ -23,3 +23,5 @@ Host buildtools2022
   User dockeruser
   Port 2222
 ```
+
+Once you have finished with your Docker Windows BuildTools image, you can call the `stop.sh` script to stop the Docker image and the Vagrant Windows machine.
