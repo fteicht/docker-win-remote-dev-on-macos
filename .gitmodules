@@ -1,0 +1,3 @@
+[submodule "windows-docker-machine"]
+	path = windows-docker-machine
+	url = https://github.com/StefanScherer/windows-docker-machine

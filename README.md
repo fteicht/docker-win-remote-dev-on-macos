@@ -5,13 +5,17 @@ One use case can be to develop Windows application remotely from Visual Studio C
 Here are the installation steps:
 
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads)
-2. Clone the [Windows Docker Machine](https://github.com/StefanScherer/windows-docker-machine) repository and follow the "[Create the Docker Machine](https://github.com/StefanScherer/windows-docker-machine#create-the-docker-machine)" and "[Switch to Windows containers](https://github.com/StefanScherer/windows-docker-machine#switch-to-windows-containers)" steps.
-3. Got to the root folder of the cloned `docker-win-remote-dev-on-macos` repository (this repository)
-4. Build the Docker container with the following shell command: `docker build -t buildtools2022:latest -m 2GB .`
-5. Run the Docker container that will launch a SSH server in your Windows virtual machine listening on port 2222 with the following shell command: `docker run -d -p 2222:22 buildtools2022`
-6. You can connect to the Windows machine as user `dockeruser` with password `Passw0rd`. You have two options:
-   * Either in the terminal with the following shell command: `ssh -p 2222 dockeruser@$(docker context inspect 2019-box | jq -r '.[0].Endpoints.docker.Host | .[6:] | .[:-5]')`
-   * Or using the Remote Explorer extension of Visual Studio Code. In this case, you need first to get the IP address of your Windows machine by issuing the following shell command: `echo $(docker context inspect 2019-box | jq -r '.[0].Endpoints.docker.Host | .[6:] | .[:-5]')`. Then, copy the resulting IP address and add the following entry in your `~/.ssh/config` file, after which your `buildtools2022` Windows machine will be accessible from the VSCode's Remote Explorer:
+2. Got to the root folder of the cloned `docker-win-remote-dev-on-macos` repository (this repository)
+3. Fetch the [Windows Docker Machine](https://github.com/StefanScherer/windows-docker-machine) repository: `git submodule update --init --recursive`
+4. Run the script that will start the Vagrant Windows machine, build and run the Windows docker container: `start.sh <build-tools-version> <path-to-the-macos-bound-folder>`
+`<build-tools-version>` must be either `16` or `17`, and `<path-to-the-macos-bound-folder>` must be prepended with `C:`.
+Example: `start.sh "16" "C:/tmp/win-dev-home"`
+
+From there, you can either directly invoke `MSBuild` commands from the shell which has been started by the docker container, or you can connect by SSH to the Windows machine as user `dockeruser` with password `Passw0rd`.
+   * To connect in a new macos terminal, invoke the following shell command: `ssh -p 2222 dockeruser@$(docker context inspect 2019-box | jq -r '.[0].Endpoints.docker.Host | .[6:] | .[:-5]')`
+   * To use the Remote Explorer extension of Visual Studio Code (so you can edit and compile your Windows machine's code directly within your macos' Visual Studio Code editor), follow these steps:
+      * You need first to get the IP address of your Windows machine by issuing the following shell command: `echo $(docker context inspect 2019-box | jq -r '.[0].Endpoints.docker.Host | .[6:] | .[:-5]')`.
+      * Then, copy the resulting IP address and add the following entry in your `~/.ssh/config` file, after which your `buildtools2022` Windows machine will be accessible from the VSCode's Remote Explorer:
 
 ```
 Host buildtools2022
