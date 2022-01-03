@@ -58,10 +58,6 @@ ENV SPINNER_VERSION 1.0.8
 COPY install-openssh.ps1 install-openssh.ps1
 RUN ./install-openssh.ps1
 
-# Create a dockeruser account
-RUN net user /add dockeruser Passw0rd
-RUN net localgroup administrators dockeruser /add
-
 # Install Spinner to watch a Windows service
 RUN \
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 ; \
@@ -74,5 +70,5 @@ RUN \
 
 # Define the entry point for the docker container.
 # This entry point starts the developer command prompt and launches the PowerShell shell.
-COPY entrypoint.bat entrypoint.bat
-ENTRYPOINT [ "entrypoint.bat" ]
+COPY entrypoint.ps1 entrypoint.ps1
+ENTRYPOINT [ "powershell.exe", "-NoLogo", "-NoExit", "C:\\entrypoint.ps1" ]
