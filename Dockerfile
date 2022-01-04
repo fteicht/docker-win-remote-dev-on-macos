@@ -5,7 +5,7 @@ ARG build_tools_version=16
 # Use the latest Windows Server Core image
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS base
 
-# The version of Visual Studio Build Tools we ant to install
+# The version of Visual Studio Build Tools we want to install
 ARG build_tools_version=16
 ENV BTVersion=${build_tools_version}
 
@@ -18,6 +18,11 @@ ENV BTYear=2022
 FROM win-bt-${build_tools_version} AS final
 RUN echo "Building Windows Build Tools %BTVersion% - %BTYear%"
 ARG build_tools_version=16
+
+# The version of Python we want to install
+ARG python_version=38
+ENV PVersion=${python_version}
+RUN IF NOT "%PVersion%" == "null" echo "Including Python %PVersion%"
 
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
@@ -40,6 +45,12 @@ RUN \
     || IF "%ERRORLEVEL%"=="3010" EXIT 0) \
     && del vs_buildtools.exe \
     && del VisualStudio.chman
+
+# Install Python
+RUN \
+    IF NOT "%PVersion%" == "null" \
+        curl -SL --output Miniconda3.exe https://repo.anaconda.com/miniconda/Miniconda3-py%PVersion%_4.10.3-Windows-x86_64.exe \
+        && start /wait Miniconda3.exe /InstallationType=AllUsers /RegisterPython=1 /AddToPath=1 /S /D=C:\Miniconda3
 
 # Install Git
 ENV GIT_VERSION 2.15.1
@@ -67,6 +78,9 @@ RUN \
     Move-Item spinner\spinner_v$env:SPINNER_VERSION.exe spinner.exe ; \
     Remove-Item spinner
 # CMD Start-Sleep 5 ; ./spinner.exe service sshd -t C:\ProgramData\ssh\logs\sshd.log
+
+# Start the SSH service
+RUN Start-Job -ScriptBlock {& ./spinner.exe service sshd -t C:\ProgramData\ssh\logs\sshd.log}
 
 # Define the entry point for the docker container.
 # This entry point starts the developer command prompt and launches the PowerShell shell.
