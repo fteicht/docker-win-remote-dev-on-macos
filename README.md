@@ -13,6 +13,11 @@ Example: `start.sh "16" "38" "C:/tmp/win-dev-home"`
 
 The macOS bound folder, e.g. `/tmp/win-dev-home` in the example above, is bound in your Windows Docker machine to the `C:\Users\DevUser\Work` folder.
 
+Warning: the conda commands won't work in the Microsoft Visual Studio's development shell that the Docker's container logs you in, so you will first need to
+exit the devopment shell before issuing conda commands like creating environment or installing packages.
+We recommend that you create a conda environment in the `C:\Users\DevUser\Work` folder that is bound to your macOS bound folder (e.g. `/tmp/win-dev-home`)
+so that it will persist after you exit your Windows development container. You can achieve this by issuing the following command: `conda create -y -p C:\Users\DevUser\Work\MyCondaEnv\`.
+
 From there, you can either directly invoke `MSBuild` commands from the shell which has been started by the docker container, or you can connect by SSH to the Windows machine as user `DevUser` with password `Passw0rd`.
    * To connect in a new macos terminal, invoke the following shell command: `ssh -p 2222 DevUser@$(docker context inspect 2019-box | jq -r '.[0].Endpoints.docker.Host | .[6:] | .[:-5]')`
    * To use the Remote Explorer extension of Visual Studio Code (so you can edit and compile your Windows machine's code directly within your macos' Visual Studio Code editor), follow these steps:

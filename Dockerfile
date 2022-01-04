@@ -51,6 +51,11 @@ RUN \
     IF NOT "%PVersion%" == "null" \
         curl -SL --output Miniconda3.exe https://repo.anaconda.com/miniconda/Miniconda3-py%PVersion%_4.10.3-Windows-x86_64.exe \
         && start /wait Miniconda3.exe /InstallationType=AllUsers /RegisterPython=1 /AddToPath=1 /S /D=C:\Miniconda3
+# We need to close and reopen the shell so that the conda program is registered and usable to init and update it
+RUN \
+    IF NOT "%PVersion%" == "null" \
+        powershell -Command "conda init powershell" \
+        && powershell -Command "conda update -n base -c defaults conda"
 
 # Install Git
 ENV GIT_VERSION 2.15.1
