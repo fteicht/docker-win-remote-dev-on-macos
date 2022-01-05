@@ -10,7 +10,7 @@ Invoke-Command -Session $session -ScriptBlock { `
 }
 
 # Move to the `Work` folder that is bound to our host working directory in the 'docker run' command
-Invoke-Command -Session $session -ScriptBlock{ `
+Invoke-Command -Session $session -ScriptBlock { `
     Set-Location "C:\Users\DevUser\Work" `
 }
 
