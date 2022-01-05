@@ -13,4 +13,4 @@ ver=$(($1 == 16 ? 2019 : $1 == 17 ? 2022 : null))`if [ "$2" != "null" ]; then ec
 docker build -t buildtools$ver:latest --build-arg build_tools_version=$1 --build-arg python_version=$2 -m 2GB .
 
 # Run the Windows Build Tools container
-docker run -it -p 2222:22 -v $3:C:/Temp/Dev buildtools$ver
+docker run -it -p 2222:22 -v $3:C:/Users/DevUser/Work buildtools$ver

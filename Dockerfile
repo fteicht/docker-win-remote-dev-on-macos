@@ -37,6 +37,9 @@ RUN \
         --installChannelUri %CD%\VisualStudio.chman \
         --add Microsoft.VisualStudio.Workload.VCTools \
         --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 \
+        --add Microsoft.VisualStudio.Component.VC.CMake.Project \
+        --add Microsoft.VisualStudio.Component.TestTools.BuildTools \
+        --add Microsoft.VisualStudio.Component.VC.ASAN \
         --add Microsoft.VisualStudio.Component.Windows10SDK.19041 \
         --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 \
         --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 \
@@ -87,7 +90,19 @@ RUN \
 # Start the SSH service
 RUN Start-Job -ScriptBlock {& ./spinner.exe service sshd -t C:\ProgramData\ssh\logs\sshd.log}
 
+# Create the DevUser account and its powershell session so that it will create its home folders,
+# which is necessary to bind a host's folder to C:\Users\DevUser\Work when running the container.
+# Creating DevUser's home folders must be done before ENTRYPOINT, otherwise Windows will create
+# another DevUser in a different domain when binding a host's folder to C:\Users\DevUser\Work
+# in the 'docker run' command invokation
+RUN \
+    $password = ConvertTo-SecureString 'Passw0rd' -AsPlainText -Force ; \
+    New-LocalUser "DevUser" -Password $password ; \
+    Add-LocalGroupMember -Group "Administrators" -Member "DevUser" ; \
+    $credential = New-Object System.Management.Automation.PSCredential ".\DevUser", $password ; \
+    New-PSSession -Credential $credential
+
 # Define the entry point for the docker container.
-# This entry point starts the developer command prompt and launches the PowerShell shell.
+# This entry point starts the developer command prompt and launches the PowerShell shell.int.ps1
 COPY entrypoint.ps1 entrypoint.ps1
 ENTRYPOINT [ "powershell.exe", "-NoLogo", "-NoExit", "C:\\entrypoint.ps1" ]

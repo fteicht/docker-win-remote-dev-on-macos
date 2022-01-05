@@ -22,13 +22,13 @@ From there, you can either directly invoke `MSBuild` commands from the shell whi
    * To connect in a new macos terminal, invoke the following shell command: `ssh -p 2222 DevUser@$(docker context inspect 2019-box | jq -r '.[0].Endpoints.docker.Host | .[6:] | .[:-5]')`
    * To use the Remote Explorer extension of Visual Studio Code (so you can edit and compile your Windows machine's code directly within your macos' Visual Studio Code editor), follow these steps:
       * You need first to get the IP address of your Windows machine by issuing the following shell command: `echo $(docker context inspect 2019-box | jq -r '.[0].Endpoints.docker.Host | .[6:] | .[:-5]')`.
-      * Then, copy the resulting IP address and add the following entry in your `~/.ssh/config` file, after which your `buildtools2022` Windows machine will be accessible from the VSCode's Remote Explorer:
+      * Then, copy the resulting IP address and add the following entry in your `~/.ssh/config` file, after which your `buildtools2019-py38` Windows machine (if you called the `start.sh` script with build tools version `16` - thus year `2019` - and python version `38`) will be accessible from the VSCode's Remote Explorer:
 
 ```
-Host buildtools2022
+Host buildtools2019-py38
   HostName <your-Windows-machine-IP>
   User DevUser
   Port 2222
 ```
 
-Once you have finished with your Docker Windows BuildTools image, you can call the `stop.sh` script to stop the Docker image and the Vagrant Windows machine.
+Once you have finished with your Docker Windows BuildTools image, you can call the `stop.sh <build-tools-version> <python-version>` script to stop the Docker image and the Vagrant Windows machine.
